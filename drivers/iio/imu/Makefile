@@ -26,6 +26,7 @@ obj-$(CONFIG_FXOS8700_SPI) += fxos8700_spi.o
 
 obj-y += inv_icm42600/
 obj-y += inv_icm45600/
+obj-y += inv_icm20948/
 obj-y += inv_mpu6050/
 
 obj-$(CONFIG_KMX61) += kmx61.o
