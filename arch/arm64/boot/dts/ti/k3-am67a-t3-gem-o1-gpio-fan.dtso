@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: GPL-2.0-only OR MIT
+/*
+ * DT Overlay to configure fan as GPIO controlled (on-off) instead of
+ * PWM controlled (varying speeds).
+ *
+ * Copyright (C) 2025 T3 Foundation - https://www.t3vakfi.org/
+ */
+/dts-v1/;
+/plugin/;
+
+#include "k3-pinctrl.h"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/*
+ * Device tree overlays cannot remove properties: /delete-property/ is not
+ * encoded into the .dtbo, so the PWM specific properties of the base board's
+ * "pwm-fan" node would survive and be rejected by the gpio-fan binding.
+ *
+ * Instead disable the PWM fan and add a separate gpio-fan node, then point the
+ * thermal cooling maps at the new node.
+ */
+&fan {
+	status = "disabled";
+};
+
+&{/} {
+	gpio_fan: gpio-fan {
+		compatible = "gpio-fan";
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_fan_pins>;
+		fan-supply = <&vsys_5v0>;
+		gpios = <&main_gpio1 9 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <0 0>, <1 1>;
+		#cooling-cells = <2>;
+	};
+};
+
+&main_pmx0 {
+	gpio_fan_pins: gpio-fan-pins {
+		pinctrl-single,pins = <
+			J722S_IOPAD(0x019c, PIN_OUTPUT, 7) /* (B25) MCASP0_AXR1.GPIO1_9 FAN_GPIO */
+		>;
+	};
+};
+
+&main0_thermal {
+	cooling-maps {
+		map1 {
+			trip = <&main0_active0>;
+			cooling-device = <&gpio_fan 1 1>;
+		};
+
+		map2 {
+			trip = <&main0_active1>;
+			cooling-device = <&gpio_fan 1 1>;
+		};
+
+		map3 {
+			trip = <&main0_active2>;
+			cooling-device = <&gpio_fan 1 1>;
+		};
+	};
+};

@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * DT Overlay to limit PCIe0 Root Complex maximum link speed to Gen2.
+ *
+ * This overlay sets the `max-link-speed` property of the PCIe0 Root
+ * Complex to 2 (5.0 GT/s), which can improve compatibility with
+ * certain PCIe devices that are unstable at Gen3 speeds.
+ *
+ * Copyright (C) 2026 T3 Foundation - https://www.t3vakfi.org/
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+
+&pcie0_rc {
+    max-link-speed = <2>;
+};

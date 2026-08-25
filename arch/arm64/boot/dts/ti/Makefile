@@ -186,6 +186,40 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-usb0-type-a.dtbo
 # Boards with J722s SoC
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-beagley-ai.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-csi0-imx219.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-gpio-fan.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-i2c1-400000.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pcie-link-speed-2.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-ecap0-gpio12.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-ecap1-gpio16.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-ecap2-gpio18.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm0-gpio14.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm0-gpio5-gpio14.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm0-gpio5.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm1-gpio13.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm1-gpio6-gpio13.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm1-gpio6.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-spidev0-1cs.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-spidev0-2cs.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-uart-ttys0.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-uart-ttys6.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-csi0-imx219.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-gpio-fan.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-i2c1-400000.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pcie-link-speed-2.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-ecap0-gpio12.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-ecap1-gpio16.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-ecap2-gpio18.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm0-gpio14.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm0-gpio5.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm0-gpio5-gpio14.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm1-gpio13.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm1-gpio6.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pwm-epwm1-gpio6-gpio13.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-spidev0-1cs.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-spidev0-2cs.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-uart-ttys0.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-uart-ttys6.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-rpi-cam-imx219.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm-csi2-quad-tevi-ov5640.dtbo
@@ -303,6 +337,40 @@ k3-am642-tqma64xxl-mbax4xxl-sdcard-dtbs := \
 	k3-am642-tqma64xxl-mbax4xxl.dtb k3-am64-tqma64xxl-mbax4xxl-sdcard.dtbo
 k3-am642-tqma64xxl-mbax4xxl-wlan-dtbs := \
 	k3-am642-tqma64xxl-mbax4xxl.dtb k3-am64-tqma64xxl-mbax4xxl-wlan.dtbo
+k3-am67a-t3-gem-o1-csi0-imx219-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-csi0-imx219.dtbo
+k3-am67a-t3-gem-o1-gpio-fan-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-gpio-fan.dtbo
+k3-am67a-t3-gem-o1-i2c1-400000-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-i2c1-400000.dtbo
+k3-am67a-t3-gem-o1-pcie-link-speed-2-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pcie-link-speed-2.dtbo
+k3-am67a-t3-gem-o1-pwm-ecap0-gpio12-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-ecap0-gpio12.dtbo
+k3-am67a-t3-gem-o1-pwm-ecap1-gpio16-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-ecap1-gpio16.dtbo
+k3-am67a-t3-gem-o1-pwm-ecap2-gpio18-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-ecap2-gpio18.dtbo
+k3-am67a-t3-gem-o1-pwm-epwm0-gpio14-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm0-gpio14.dtbo
+k3-am67a-t3-gem-o1-pwm-epwm0-gpio5-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm0-gpio5.dtbo
+k3-am67a-t3-gem-o1-pwm-epwm0-gpio5-gpio14-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm0-gpio5-gpio14.dtbo
+k3-am67a-t3-gem-o1-pwm-epwm1-gpio13-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm1-gpio13.dtbo
+k3-am67a-t3-gem-o1-pwm-epwm1-gpio6-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm1-gpio6.dtbo
+k3-am67a-t3-gem-o1-pwm-epwm1-gpio6-gpio13-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm1-gpio6-gpio13.dtbo
+k3-am67a-t3-gem-o1-spidev0-1cs-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-spidev0-1cs.dtbo
+k3-am67a-t3-gem-o1-spidev0-2cs-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-spidev0-2cs.dtbo
+k3-am67a-t3-gem-o1-uart-ttys0-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-uart-ttys0.dtbo
+k3-am67a-t3-gem-o1-uart-ttys6-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-uart-ttys6.dtbo
 k3-am68-sk-base-board-csi2-dual-imx219-dtbs := k3-am68-sk-base-board.dtb \
 	k3-j721e-sk-csi2-dual-imx219.dtbo
 k3-am68-sk-base-board-pcie1-ep-dtbs := k3-am68-sk-base-board.dtb \
@@ -386,6 +454,23 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
 	k3-am642-phyboard-electra-x27-gpio1-spi1-uart3.dtb \
 	k3-am642-tqma64xxl-mbax4xxl-sdcard.dtb \
 	k3-am642-tqma64xxl-mbax4xxl-wlan.dtb \
+	k3-am67a-t3-gem-o1-csi0-imx219.dtb \
+	k3-am67a-t3-gem-o1-gpio-fan.dtb \
+	k3-am67a-t3-gem-o1-i2c1-400000.dtb \
+	k3-am67a-t3-gem-o1-pcie-link-speed-2.dtb \
+	k3-am67a-t3-gem-o1-pwm-ecap0-gpio12.dtb \
+	k3-am67a-t3-gem-o1-pwm-ecap1-gpio16.dtb \
+	k3-am67a-t3-gem-o1-pwm-ecap2-gpio18.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm0-gpio14.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm0-gpio5.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm0-gpio5-gpio14.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm1-gpio13.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm1-gpio6.dtb \
+	k3-am67a-t3-gem-o1-pwm-epwm1-gpio6-gpio13.dtb \
+	k3-am67a-t3-gem-o1-spidev0-1cs.dtb \
+	k3-am67a-t3-gem-o1-spidev0-2cs.dtb \
+	k3-am67a-t3-gem-o1-uart-ttys0.dtb \
+	k3-am67a-t3-gem-o1-uart-ttys6.dtb \
 	k3-am68-phyboard-izar-lvds-ph128800t006.dtb \
 	k3-am68-phyboard-izar-peb-av-15.dtb \
 	k3-am68-sk-base-board-csi2-dual-imx219.dtb \

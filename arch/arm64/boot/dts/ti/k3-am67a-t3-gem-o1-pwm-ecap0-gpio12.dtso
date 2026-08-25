@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: GPL-2.0-only OR MIT
+/*
+ * DT Overlay to use GPIO12 (PWM0) within the expansion header for ECAP0 (pwmchip0).
+ *
+ * Copyright (C) 2023 Texas Instruments Incorporated - https://www.ti.com/
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include "k3-pinctrl.h"
+
+/*
+ * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+*/
+&main_pmx0 {
+	hat_32_pwm_ecap: hat-32-pwm-ecap-pins {
+		pinctrl-single,pins = <
+			J722S_IOPAD(0x1B8, PIN_OUTPUT, 3) /* (C20) SPI0_CS1.ECAP0_IN_APWM_OUT */
+		>;
+	};
+};
+
+&ecap0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&hat_32_pwm_ecap>;
+	status = "okay";
+};

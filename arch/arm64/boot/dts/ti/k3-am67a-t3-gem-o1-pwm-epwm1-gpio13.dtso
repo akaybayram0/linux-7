@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: GPL-2.0-only OR MIT
+/*
+ * DT Overlay to use GPIO13 (PWM1) within the expansion header for EPWM1 (pwmchip5).
+ *
+ * Copyright (C) 2023 Texas Instruments Incorporated - https://www.ti.com/
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include "k3-pinctrl.h"
+
+/*
+ * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+*/
+&main_pmx0 {
+	hat_33_pwm: hat-33-pwm-pins {
+		pinctrl-single,pins = <
+			J722S_IOPAD(0x1C0, PIN_OUTPUT, 2) /* (E19) SPI0_D0.EHRPWM1_B */
+		>;
+	};
+};
+
+&epwm1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&hat_33_pwm>;
+	status = "okay";
+};
