@@ -1636,6 +1636,8 @@ patternProperties:
   "^synopsys,.*":
     description: Synopsys, Inc. (deprecated, use snps)
     deprecated: true
+  "^t3gemstone,.*":
+    description: T3 Gemstone, Turkish Technology Team Foundation (T3 Vakfi)
   "^taiguanck,.*":
     description: Shenzhen Top Group Technology Co., Ltd.
   "^taos,.*":
