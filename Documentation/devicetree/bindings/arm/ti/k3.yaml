@@ -219,6 +219,7 @@ properties:
         items:
           - enum:
               - beagle,am67a-beagley-ai
+              - t3gemstone,am67a-t3-gem-o1
               - ti,j722s-evm
           - const: ti,j722s
 
