@@ -5520,6 +5520,33 @@ static const struct drm_display_mode waveshare_133inch_mode = {
 	.flags = DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_PHSYNC,
 };
 
+static const struct drm_display_mode waveshare_133inch_2lane_mode = {
+	.clock = 83297,
+	.hdisplay = 1920,
+	.hsync_start = 1920 + 88,
+	.hsync_end = 1920 + 88 + 44,
+	.htotal = 1920 + 88 + 44 + 148,
+	.vdisplay = 1080,
+	.vsync_start = 1080 + 4,
+	.vsync_end = 1080 + 4 + 5,
+	.vtotal = 1080 + 4 + 5 + 36,
+	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+};
+
+static const struct panel_desc waveshare_133inch_2lane = {
+	.modes = &waveshare_133inch_2lane_mode,
+	.num_modes = 1,
+	.bpc = 8,
+	.size = {
+		.width = 293,
+		.height = 163,
+	},
+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+	.connector_type = DRM_MODE_CONNECTOR_DPI,
+	.bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE |
+		     DRM_BUS_FLAG_SYNC_SAMPLE_POSEDGE,
+};
+
 static const struct panel_desc waveshare_133inch = {
 	.modes = &waveshare_133inch_mode,
 	.num_modes = 1,
@@ -6200,6 +6227,9 @@ static const struct of_device_id platform_of_match[] = {
 	}, {
 		.compatible = "waveshare,11.9inch-panel",
 		.data = &waveshare_119_lcd_panel
+	}, {
+		.compatible = "waveshare,13.3inch-2lane-panel",
+		.data = &waveshare_133inch_2lane,
 	}, {
 		.compatible = "waveshare,13.3inch-panel",
 		.data = &waveshare_133inch,

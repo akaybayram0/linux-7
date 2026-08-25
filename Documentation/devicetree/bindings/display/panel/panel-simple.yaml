@@ -354,6 +354,8 @@ properties:
         # Waveshare 11.9" (320x1480) LCD panel
       - waveshare,11.9inch-panel
         # Waveshare 13.3" FHD (1920x1080) LCD panel
+      - waveshare,13.3inch-2lane-panel
+        # Waveshare 13.3" FHD (1920x1080) LCD panel
       - waveshare,13.3inch-panel
         # Waveshare 2.8" VGA (480x640) LCD panel
       - waveshare,2.8inch-panel
