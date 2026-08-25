@@ -963,9 +963,15 @@ dsi0_csi1_i2c: &main_i2c0 {
 			/*
 			 * HDMI can be serviced with 3 potential VPs -
 			 * (DSS0 VP1 / DSS1 VP0 / DSS1 VP1).
-			 * For now, we will service it with DSS0 VP1.
+			 * For now, we will service it with DSS1 VP0.
 			 */
-			/* MAINLINE-EKSIK: DSS1 VP kaynagi mainline'da yok, giris portu bos */
+			port@0 {
+				reg = <0>;
+
+				sii9022_in: endpoint {
+					remote-endpoint = <&dss1_dpi0_out>;
+				};
+			};
 
 			port@1 {
 				reg = <1>;
@@ -974,6 +980,35 @@ dsi0_csi1_i2c: &main_i2c0 {
 					remote-endpoint = <&hdmi_connector_in>;
 				};
 			};
+		};
+	};
+};
+
+&dss1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_dpi_pins_default>;
+
+	clocks = <&k3_clks 232 8>,
+		 <&k3_clks 232 0>,
+		 <&k3_clks 232 4>;
+
+	assigned-clocks = <&k3_clks 241 0>, /* DSS1-VP0 */
+			  <&k3_clks 240 0>, /* DSS1-VP1 */
+			  <&k3_clks 245 0>; /* DPI Output */
+
+	assigned-clock-parents = <&k3_clks 241 2>,	/* PLL 17 HDMI */
+				 <&k3_clks 240 1>,	/* PLL 18 DSI */
+				 <&k3_clks 245 2>;	/* DSS1-DPI0 */
+};
+
+&dss1_ports {
+	/* DSS1-VP0: DPI/HDMI Output */
+	port@0 {
+		reg = <0>;
+
+		dss1_dpi0_out: endpoint {
+			remote-endpoint = <&sii9022_in>;
 		};
 	};
 };
