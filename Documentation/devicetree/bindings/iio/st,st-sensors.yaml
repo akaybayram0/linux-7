@@ -127,6 +127,8 @@ properties:
     description: an optional 3x3 mounting rotation matrix.
 
 allOf:
+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+
   - if:
       properties:
         compatible:
@@ -167,7 +169,7 @@ required:
   - compatible
   - reg
 
-additionalProperties: false
+unevaluatedProperties: false
 
 examples:
   - |
