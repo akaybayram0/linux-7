@@ -17,6 +17,7 @@ properties:
   compatible:
     enum:
       - waveshare,dsi2dpi
+      - waveshare,dsi2dpi-13.3inch-2lane
       - waveshare,dsi2lvds
 
   reg:

@@ -23,6 +23,12 @@ struct ws_bridge {
 	struct backlight_device *backlight;
 	struct device *dev;
 	struct regmap *reg_map;
+	u8 enable_value;
+};
+
+struct ws_bridge_match_data {
+	unsigned int connector_type;
+	u8 enable_value;
 };
 
 static const struct regmap_config ws_regmap_config = {
@@ -96,7 +102,7 @@ static void ws_bridge_bridge_enable(struct drm_bridge *bridge)
 {
 	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
 
-	regmap_write(ws->reg_map, 0xad, 0x01);
+	regmap_write(ws->reg_map, 0xad, ws->enable_value);
 	backlight_enable(ws->backlight);
 }
 
@@ -143,6 +149,7 @@ static struct backlight_device *ws_bridge_create_backlight(struct ws_bridge *ws)
 
 static int ws_bridge_probe(struct i2c_client *i2c)
 {
+	const struct ws_bridge_match_data *match_data;
 	struct device *dev = &i2c->dev;
 	struct drm_panel *panel;
 	struct ws_bridge *ws;
@@ -153,6 +160,8 @@ static int ws_bridge_probe(struct i2c_client *i2c)
 		return PTR_ERR(ws);
 
 	ws->dev = dev;
+	match_data = i2c_get_match_data(i2c);
+	ws->enable_value = match_data->enable_value;
 
 	ws->reg_map = devm_regmap_init_i2c(i2c, &ws_regmap_config);
 	if (IS_ERR(ws->reg_map))
@@ -177,16 +186,33 @@ static int ws_bridge_probe(struct i2c_client *i2c)
 	regmap_write(ws->reg_map, 0xc2, 0x01);
 	regmap_write(ws->reg_map, 0xac, 0x01);
 
-	ws->bridge.type = (uintptr_t)i2c_get_match_data(i2c);
+	ws->bridge.type = match_data->connector_type;
 	ws->bridge.of_node = dev->of_node;
 	devm_drm_bridge_add(dev, &ws->bridge);
 
 	return ws_bridge_attach_dsi(ws);
 }
 
+static const struct ws_bridge_match_data ws_dsi2dpi = {
+	.connector_type = DRM_MODE_CONNECTOR_DPI,
+	.enable_value = 0x01,
+};
+
+static const struct ws_bridge_match_data ws_dsi2dpi_13_3inch_2lane = {
+	.connector_type = DRM_MODE_CONNECTOR_DPI,
+	.enable_value = 0x02,
+};
+
+static const struct ws_bridge_match_data ws_dsi2lvds = {
+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+	.enable_value = 0x01,
+};
+
 static const struct of_device_id ws_bridge_of_ids[] = {
-	{.compatible = "waveshare,dsi2dpi", .data = (void *)DRM_MODE_CONNECTOR_DPI, },
-	{.compatible = "waveshare,dsi2lvds", .data = (void *)DRM_MODE_CONNECTOR_LVDS, },
+	{ .compatible = "waveshare,dsi2dpi", .data = &ws_dsi2dpi },
+	{ .compatible = "waveshare,dsi2dpi-13.3inch-2lane",
+	  .data = &ws_dsi2dpi_13_3inch_2lane },
+	{ .compatible = "waveshare,dsi2lvds", .data = &ws_dsi2lvds },
 	{ }
 };
 
