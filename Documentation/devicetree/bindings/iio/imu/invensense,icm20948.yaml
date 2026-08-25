@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/iio/imu/invensense,icm20948.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: InvenSense ICM-20948 Inertial Measurement Unit
+
+maintainers:
+  - Toxpox <toxpox@outlook.com>
+
+description: |
+  9-axis MotionTracking device that combines a 3-axis gyroscope, a 3-axis
+  accelerometer and a 3-axis compass (AK09916), together with an on-board
+  Digital Motion Processor.
+
+  The device supports both I2C and SPI host interfaces. Unlike the MPU-6050
+  family, the register map is banked and the on-chip magnetometer is reached
+  through the I2C master interface of the device, so it is described by its
+  own binding.
+
+  https://invensense.tdk.com/wp-content/uploads/2016/06/DS-000189-ICM-20948-v1.3.pdf
+
+properties:
+  compatible:
+    const: invensense,icm20948
+
+  reg:
+    maxItems: 1
+
+  interrupts:
+    maxItems: 1
+
+  drive-open-drain:
+    type: boolean
+
+  vdd-supply:
+    description: Regulator that provides power to the sensor
+
+  vddio-supply:
+    description: Regulator that provides power to the bus
+
+  mount-matrix: true
+
+  spi-cpha: true
+  spi-cpol: true
+
+required:
+  - compatible
+  - reg
+
+allOf:
+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+
+unevaluatedProperties: false
+
+examples:
+  - |
+    #include <dt-bindings/interrupt-controller/irq.h>
+    i2c {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        imu@68 {
+            compatible = "invensense,icm20948";
+            reg = <0x68>;
+            interrupt-parent = <&gpio2>;
+            interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
+            vdd-supply = <&vdd>;
+            vddio-supply = <&vddio>;
+        };
+    };
+  - |
+    spi {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        imu@0 {
+            compatible = "invensense,icm20948";
+            reg = <0>;
+            spi-max-frequency = <7000000>;
+            spi-cpha;
+            spi-cpol;
+        };
+    };
