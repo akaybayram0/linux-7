@@ -1,0 +1,116 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * T3 Gemstone O1 waveshare 8 0inch panel DSI panel overlay
+ *
+ * Copyright (C) 2025-2026 T3 Foundation - https://www.t3vakfi.org/
+ */
+
+/dts-v1/;
+/plugin/;
+
+&{/} {
+	panel {
+		compatible = "waveshare,8.0inch-c-panel";
+		power-supply = <&vsys_5v0>;
+
+		port {
+			panel_in: endpoint {
+				remote-endpoint = <&bridge_out>;
+			};
+		};
+	};
+};
+
+&mipi_switch_oe {
+	default-state = "off";
+};
+
+&mipi_switch_sel {
+	default-state = "off";
+};
+
+&dphy_tx0 {
+	status = "okay";
+};
+
+&dsi0_csi1_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	bridge@45 {
+		compatible = "waveshare,dsi2lvds";
+		reg = <0x45>;
+		power-supply = <&vsys_5v0>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+
+				bridge_in: endpoint {
+					data-lanes = <1 2>;
+					remote-endpoint = <&dsi0_out>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+
+				bridge_out: endpoint {
+					remote-endpoint = <&panel_in>;
+				};
+			};
+		};
+	};
+
+	touch: touchscreen@14 {
+		reg = <0x14>;
+		compatible = "goodix,gt911";
+
+		touchscreen-inverted-x;
+		touchscreen-swapped-x-y;
+
+		touchscreen-size-x = <800>;
+		touchscreen-size-y = <1280>;
+	};
+};
+
+&dsi0 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+
+			dsi0_out: endpoint {
+				remote-endpoint = <&bridge_in>;
+			};
+		};
+
+		port@1 {
+			reg = <1>;
+
+			dsi0_in: endpoint {
+				remote-endpoint = <&dss1_dpi1_out>;
+			};
+		};
+	};
+};
+
+&dss1_ports {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	port@1 {
+		reg = <1>;
+
+		dss1_dpi1_out: endpoint {
+			remote-endpoint = <&dsi0_in>;
+		};
+	};
+};

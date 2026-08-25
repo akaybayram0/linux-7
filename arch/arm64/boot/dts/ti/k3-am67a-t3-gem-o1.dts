@@ -315,13 +315,13 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&mipi_switch_pins>;
 
-		led-0 {
+		mipi_switch_oe: led-0 {
 			label = "MIPI_SWITCH_OE";
 			gpios = <&main_gpio0 1 GPIO_ACTIVE_HIGH>;
 			default-state = "on";
 		};
 
-		led-1 {
+		mipi_switch_sel: led-1 {
 			label = "MIPI_SWITCH_SEL";
 			gpios = <&main_gpio0 2 GPIO_ACTIVE_HIGH>;
 			default-state = "off";

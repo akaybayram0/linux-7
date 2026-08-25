@@ -187,6 +187,22 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-usb0-type-a.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-beagley-ai.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-csi0-imx219.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-rpi-7inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-10-1inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-11-9inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-2lane-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-4lane-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-2-8inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-3-4inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-c-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-5-0inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-6-25inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7-9inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-gpio-fan.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-i2c1-400000.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pcie-link-speed-2.dtbo
@@ -204,6 +220,22 @@ dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-spidev0-2cs.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-uart-ttys0.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-uart-ttys6.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-csi0-imx219.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-rpi-7inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-10-1inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-11-9inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-2lane-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-4lane-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-2-8inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-3-4inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-c-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-5-0inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-6-25inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7-9inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-gpio-fan.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-i2c1-400000.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pcie-link-speed-2.dtb
@@ -339,6 +371,38 @@ k3-am642-tqma64xxl-mbax4xxl-wlan-dtbs := \
 	k3-am642-tqma64xxl-mbax4xxl.dtb k3-am64-tqma64xxl-mbax4xxl-wlan.dtbo
 k3-am67a-t3-gem-o1-csi0-imx219-dtbs := k3-am67a-t3-gem-o1.dtb \
 	k3-am67a-t3-gem-o1-csi0-imx219.dtbo
+k3-am67a-t3-gem-o1-dsi-rpi-7inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-rpi-7inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-10-1inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-10-1inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-11-9inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-11-9inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-2lane-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-2lane-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-4lane-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-4lane-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-2-8inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-2-8inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-3-4inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-3-4inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-c-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-c-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-5-0inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-5-0inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-6-25inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-6-25inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-7-9inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-7-9inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtbo
+k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtbo
 k3-am67a-t3-gem-o1-gpio-fan-dtbs := k3-am67a-t3-gem-o1.dtb \
 	k3-am67a-t3-gem-o1-gpio-fan.dtbo
 k3-am67a-t3-gem-o1-i2c1-400000-dtbs := k3-am67a-t3-gem-o1.dtb \
@@ -455,6 +519,22 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
 	k3-am642-tqma64xxl-mbax4xxl-sdcard.dtb \
 	k3-am642-tqma64xxl-mbax4xxl-wlan.dtb \
 	k3-am67a-t3-gem-o1-csi0-imx219.dtb \
+	k3-am67a-t3-gem-o1-dsi-rpi-7inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-10-1inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-11-9inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-2lane-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-13-3inch-4lane-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-2-8inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-3-4inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-c-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-4-0inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-5-0inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-6-25inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-7-9inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtb \
+	k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtb \
 	k3-am67a-t3-gem-o1-gpio-fan.dtb \
 	k3-am67a-t3-gem-o1-i2c1-400000.dtb \
 	k3-am67a-t3-gem-o1-pcie-link-speed-2.dtb \
