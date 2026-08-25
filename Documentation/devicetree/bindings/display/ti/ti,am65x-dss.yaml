@@ -31,6 +31,8 @@ properties:
       - ti,am625-dss
       - ti,am62a7-dss
       - ti,am62l-dss
+      - ti,am62p51-dss
+      - ti,am62p52-dss
       - ti,am65x-dss
 
   reg:
@@ -220,6 +222,7 @@ allOf:
           contains:
             enum:
               - ti,am62l-dss
+              - ti,am62p52-dss
               - ti,am65x-dss
     then:
       properties:
