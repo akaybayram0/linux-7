@@ -55,6 +55,9 @@ properties:
     maxItems: 1
 
   interrupts:
+    description:
+      Interrupt line of the touch controller. When absent the driver falls
+      back to polling the controller over I2C.
     maxItems: 1
 
   reset-gpios:
@@ -116,7 +119,6 @@ unevaluatedProperties: false
 required:
   - compatible
   - reg
-  - interrupts
 
 examples:
   - |
