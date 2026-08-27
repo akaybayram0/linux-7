@@ -203,6 +203,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtbo
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-edgeai-apps.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-gpio-fan.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-i2c1-400000.dtbo
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pcie-link-speed-2.dtbo
@@ -236,6 +237,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-h-panel.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtb
+dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-edgeai-apps.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-gpio-fan.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-i2c1-400000.dtb
 dtb-$(CONFIG_ARCH_K3) += k3-am67a-t3-gem-o1-pcie-link-speed-2.dtb
@@ -403,6 +405,8 @@ k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
 	k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtbo
 k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel-dtbs := k3-am67a-t3-gem-o1.dtb \
 	k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtbo
+k3-am67a-t3-gem-o1-edgeai-apps-dtbs := k3-am67a-t3-gem-o1.dtb \
+	k3-am67a-t3-gem-o1-edgeai-apps.dtbo
 k3-am67a-t3-gem-o1-gpio-fan-dtbs := k3-am67a-t3-gem-o1.dtb \
 	k3-am67a-t3-gem-o1-gpio-fan.dtbo
 k3-am67a-t3-gem-o1-i2c1-400000-dtbs := k3-am67a-t3-gem-o1.dtb \
@@ -535,6 +539,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
 	k3-am67a-t3-gem-o1-dsi-waveshare-7inch-panel.dtb \
 	k3-am67a-t3-gem-o1-dsi-waveshare-8-0inch-panel.dtb \
 	k3-am67a-t3-gem-o1-dsi-waveshare-8-8inch-panel.dtb \
+	k3-am67a-t3-gem-o1-edgeai-apps.dtb \
 	k3-am67a-t3-gem-o1-gpio-fan.dtb \
 	k3-am67a-t3-gem-o1-i2c1-400000.dtb \
 	k3-am67a-t3-gem-o1-pcie-link-speed-2.dtb \
