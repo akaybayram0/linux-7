@@ -20,3 +20,15 @@ config DMABUF_HEAPS_CMA
 	  Choose this option to enable dma-buf CMA heap. This heap is backed
 	  by the Contiguous Memory Allocator (CMA). If your system has these
 	  regions, you should say Y here.
+
+config DMABUF_HEAPS_CARVEOUT
+	tristate "DMA-BUF Carveout Heap"
+	depends on DMABUF_HEAPS && OF_RESERVED_MEM
+	select GENERIC_ALLOCATOR
+	help
+	  Choose this option to enable dma-buf carveout heaps. Each
+	  reserved-memory region marked compatible with "dma-heap-carveout"
+	  is exported as /dev/dma_heap/carveout_<region-name>.
+
+	  This is required by TI vision-apps / TIOVX userspace, which
+	  allocates shared memory from such regions. If in doubt, say N.
