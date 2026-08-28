@@ -358,6 +358,39 @@ rpmsg_show_attr(src, src, "0x%x\n");
 rpmsg_show_attr(dst, dst, "0x%x\n");
 rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
 
+/*
+ * TI userspace (libti_rpmsg_char, vision-apps/TIOVX) enumerates endpoints
+ * through local_port / remote_port / remoteproc_id instead of src / dst.
+ * Provide them as aliases so that stack works on mainline kernels too;
+ * without them ti_rpmsg_char fails with "get_local_endpt failed".
+ */
+rpmsg_show_attr(local_port, src, "0x%x\n");
+rpmsg_show_attr(remote_port, dst, "0x%x\n");
+
+static ssize_t remoteproc_id_show(struct device *dev,
+				  struct device_attribute *attr, char *buf)
+{
+	struct device *p = dev;
+	int id = -1;
+
+	/*
+	 * Walk up to the remoteproc parent and report its index, matching
+	 * the /sys/class/remoteproc/remoteprocN numbering userspace expects.
+	 */
+	while (p) {
+		if (p->parent && dev_name(p->parent) &&
+		    !strncmp(dev_name(p->parent), "remoteproc", 10)) {
+			if (kstrtoint(dev_name(p->parent) + 10, 10, &id))
+				id = -1;
+			break;
+		}
+		p = p->parent;
+	}
+
+	return sprintf(buf, "%d\n", id);
+}
+static DEVICE_ATTR_RO(remoteproc_id);
+
 static ssize_t modalias_show(struct device *dev,
 			     struct device_attribute *attr, char *buf)
 {
@@ -378,6 +411,9 @@ static struct attribute *rpmsg_dev_attrs[] = {
 	&dev_attr_dst.attr,
 	&dev_attr_src.attr,
 	&dev_attr_announce.attr,
+	&dev_attr_local_port.attr,
+	&dev_attr_remote_port.attr,
+	&dev_attr_remoteproc_id.attr,
 	NULL,
 };
 ATTRIBUTE_GROUPS(rpmsg_dev);
