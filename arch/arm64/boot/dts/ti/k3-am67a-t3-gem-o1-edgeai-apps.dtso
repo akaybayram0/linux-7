@@ -21,7 +21,14 @@
 /dts-v1/;
 /plugin/;
 
-/* Disable the ipc-echo carveouts that this overlay replaces. */
+/*
+ * Replace the base global CMA pool with a fixed, 32-bit reachable one.
+ * See the edgeai_cma node below for the rationale.
+ */
+&{/reserved-memory/linux,cma} {
+	status = "disabled";
+};
+
 &mcu_r5fss0_core0_dma_memory_region {
 	status = "disabled";
 };
@@ -134,9 +141,23 @@
 		no-map;
 	};
 
-	vision_apps_shared_region: vision-apps-shared-memories@8a0000000 {
+	vision_apps_shared_region: vision_apps_shared-memories@8a0000000 {
 		compatible = "dma-heap-carveout";
 		reg = <0x08 0xa0000000 0x00 0x20000000>;
+	};
+	/*
+	 * Wave5 VPU 32-bit DMA maskesi kullanır (wave5-vpu.c: DMA_BIT_MASK(32)).
+	 * Base DTS'teki linux,cma boyut tabanlı olduğu için çekirdek onu üst
+	 * RAM'e (0x8c8000000, 35 GiB) yerleştirir ve VPU oraya erişemez.
+	 * Tahsisler 4 GiB altındaki buddy'ye düşer, orada MAX_PAGE_ORDER
+	 * sınırı 4 MiB'dir; GStreamer'ın istediği 32 MiB reddedilir.
+	 * Bu bölge sabit adreslidir ve tamamen 32-bit sınırının altındadır.
+	 */
+	edgeai_cma: linux,cma@b8000000 {
+		compatible = "shared-dma-pool";
+		reusable;
+		reg = <0x00 0xb8000000 0x00 0x20000000>;
+		linux,cma-default;
 	};
 };
 
