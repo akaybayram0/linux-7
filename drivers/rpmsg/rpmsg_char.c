@@ -176,6 +176,15 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
 
 	ept->flow_cb = rpmsg_ept_flow_cb;
 	eptdev->ept = ept;
+	/*
+	 * The local address is only assigned when the endpoint is created on
+	 * open(); chinfo still carries RPMSG_ADDR_ANY from the CREATE_EPT
+	 * ioctl. Publish the real address so that the src / local_port sysfs
+	 * attributes report it. TI userspace (libti_rpmsg_char) reads src to
+	 * learn the local endpoint and fails with "get_local_endpt failed"
+	 * when it sees the placeholder value.
+	 */
+	eptdev->chinfo.src = ept->addr;
 	filp->private_data = eptdev;
 	mutex_unlock(&eptdev->ept_lock);
 
@@ -393,10 +402,58 @@ static ssize_t dst_show(struct device *dev, struct device_attribute *attr,
 }
 static DEVICE_ATTR_RO(dst);
 
+/*
+ * TI userspace (libti_rpmsg_char, used by vision-apps / TIOVX) looks up
+ * endpoints under /sys/class/rpmsg and reads local_port / remote_port /
+ * remoteproc_id rather than src / dst. Export them here as well, otherwise
+ * ti_rpmsg_char fails with "get_local_endpt failed" and the whole stack
+ * cannot open any channel to the DSPs.
+ */
+static ssize_t local_port_show(struct device *dev,
+			       struct device_attribute *attr, char *buf)
+{
+	struct rpmsg_eptdev *eptdev = dev_get_drvdata(dev);
+
+	return sprintf(buf, "0x%x\n", eptdev->chinfo.src);
+}
+static DEVICE_ATTR_RO(local_port);
+
+static ssize_t remote_port_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	struct rpmsg_eptdev *eptdev = dev_get_drvdata(dev);
+
+	return sprintf(buf, "0x%x\n", eptdev->chinfo.dst);
+}
+static DEVICE_ATTR_RO(remote_port);
+
+static ssize_t remoteproc_id_show(struct device *dev,
+				  struct device_attribute *attr, char *buf)
+{
+	struct device *p = dev;
+	int id = -1;
+
+	while (p) {
+		if (p->parent && dev_name(p->parent) &&
+		    !strncmp(dev_name(p->parent), "remoteproc", 10)) {
+			if (kstrtoint(dev_name(p->parent) + 10, 10, &id))
+				id = -1;
+			break;
+		}
+		p = p->parent;
+	}
+
+	return sprintf(buf, "%d\n", id);
+}
+static DEVICE_ATTR_RO(remoteproc_id);
+
 static struct attribute *rpmsg_eptdev_attrs[] = {
 	&dev_attr_name.attr,
 	&dev_attr_src.attr,
 	&dev_attr_dst.attr,
+	&dev_attr_local_port.attr,
+	&dev_attr_remote_port.attr,
+	&dev_attr_remoteproc_id.attr,
 	NULL
 };
 ATTRIBUTE_GROUPS(rpmsg_eptdev);
