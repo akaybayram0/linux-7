@@ -225,7 +225,14 @@ static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
 
 	/* do we need to allocate a local address ? */
 	if (addr == RPMSG_ADDR_ANY) {
-		id_min = RPMSG_RESERVED_ADDRESSES;
+		/*
+		 * Start dynamic addresses just above the reserved range.
+		 * TI userspace (libti_rpmsg_char) rejects a local address
+		 * that is not strictly greater than RPMSG_RESERVED_ADDRESSES,
+		 * so handing out 1024 itself makes vision-apps/TIOVX fail with
+		 * "invalid local address 1024, should be more than 1024".
+		 */
+		id_min = RPMSG_RESERVED_ADDRESSES + 1;
 		id_max = 0;
 	} else {
 		id_min = addr;
