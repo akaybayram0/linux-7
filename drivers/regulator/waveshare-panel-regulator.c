@@ -6,6 +6,7 @@
  */
 
 #include <linux/backlight.h>
+#include <linux/i2c.h>
 #include <linux/err.h>
 #include <linux/gpio.h>
 #include <linux/gpio/driver.h>
@@ -141,7 +142,7 @@ static int waveshare_panel_update_status(struct backlight_device *bl)
 	struct waveshare_panel_lcd *state = bl_get_data(bl);
 	int brightness = bl->props.brightness;
 
-	if (bl->props.power != FB_BLANK_UNBLANK ||
+	if (bl->props.power != BACKLIGHT_POWER_ON ||
 	    bl->props.state & (BL_CORE_SUSPENDED | BL_CORE_FBBLANK))
 		brightness = 0;
 

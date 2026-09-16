@@ -604,9 +604,11 @@ static int ws_panel_probe(struct i2c_client *i2c)
 	const struct ws_panel_data *_ws_panel_data;
 	int ret;
 
-	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
-	if (!ts)
-		return -ENOMEM;
+	ts = devm_drm_panel_alloc(dev, struct ws_panel, base,
+				  &ws_panel_funcs,
+				  DRM_MODE_CONNECTOR_DSI);
+	if (IS_ERR(ts))
+		return PTR_ERR(ts);
 
 	_ws_panel_data = of_device_get_match_data(dev);
 	if (!_ws_panel_data)
@@ -669,8 +671,6 @@ static int ws_panel_probe(struct i2c_client *i2c)
 		return PTR_ERR(ts->dsi);
 	}
 
-	drm_panel_init(&ts->base, dev, &ws_panel_funcs,
-		       DRM_MODE_CONNECTOR_DSI);
 
 	ts->base.backlight = ws_panel_create_backlight(ts);
 	if (IS_ERR(ts->base.backlight)) {

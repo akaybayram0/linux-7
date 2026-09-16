@@ -2247,16 +2247,16 @@ static int ws_panel_dsi_probe(struct mipi_dsi_device *dsi)
 	dev_info(&dsi->dev, "dsi panel: %s\n",
 		 (char *)of_get_property(dsi->dev.of_node, "compatible", NULL));
 
-	ctx = devm_kzalloc(&dsi->dev, sizeof(*ctx), GFP_KERNEL);
-	if (!ctx)
-		return -ENOMEM;
+	ctx = devm_drm_panel_alloc(&dsi->dev, struct ws_panel, panel,
+					&ws_panel_funcs,
+					DRM_MODE_CONNECTOR_DSI);
+	if (IS_ERR(ctx))
+		return PTR_ERR(ctx);
 	mipi_dsi_set_drvdata(dsi, ctx);
 	ctx->dsi = dsi;
 	ctx->desc = of_device_get_match_data(&dsi->dev);
 
 	ctx->panel.prepare_prev_first = true;
-	drm_panel_init(&ctx->panel, &dsi->dev, &ws_panel_funcs,
-		       DRM_MODE_CONNECTOR_DSI);
 
 	ctx->reset = devm_gpiod_get_optional(&dsi->dev, "reset", GPIOD_ASIS);
 	if (IS_ERR(ctx->reset))
