@@ -1458,7 +1458,7 @@ static const struct k3_r5_soc_data am64_soc_data = {
 static const struct k3_r5_soc_data am62_soc_data = {
 	.tcm_is_double = false,
 	.tcm_ecc_autoinit = true,
-	.single_cpu_mode = false,
+	.single_cpu_mode = true,
 	.is_single_core = true,
 	.core_data = &r5_data,
 };
