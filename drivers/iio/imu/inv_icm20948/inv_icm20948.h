@@ -48,6 +48,7 @@
  #define INV_ICM20948_REG_GYRO_USER_OFFSET_Z 0x2007
 
 extern const struct regmap_config inv_icm20948_regmap_config;
+extern const struct regmap_config inv_icm20948_regmap_config_spi;
 
 extern const struct dev_pm_ops inv_icm20948_pm_ops;
 

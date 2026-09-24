@@ -8,3 +8,6 @@ inv-icm20948-y += inv_icm20948_power.o
 
 obj-$(CONFIG_INV_ICM20948_I2C) += inv-icm20948-i2c.o
 inv-icm20948-i2c-y += inv_icm20948_i2c.o
+
+obj-$(CONFIG_INV_ICM20948_SPI) += inv-icm20948-spi.o
+inv-icm20948-spi-y += inv_icm20948_spi.o

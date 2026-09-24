@@ -64,6 +64,28 @@ const struct regmap_config inv_icm20948_regmap_config = {
 };
 EXPORT_SYMBOL_NS_GPL(inv_icm20948_regmap_config, "IIO_ICM20948");
 
+/*
+ * SPI shares the same bank-windowed register map as I2C, but the
+ * ICM-20948 SPI protocol dedicates the top bit of the register
+ * address byte to mark a read (bit7=1) vs. a write (bit7=0). I2C has
+ * no such convention (the read/write direction is carried in the I2C
+ * address byte's R/W bit instead), so this cannot be folded into the
+ * shared inv_icm20948_regmap_config above without breaking I2C.
+ */
+const struct regmap_config inv_icm20948_regmap_config_spi = {
+	.name = "inv_icm20948",
+	.reg_bits = 8,
+	.val_bits = 8,
+	.read_flag_mask = BIT(7),
+	.max_register = 0x3FFF,
+	.ranges = inv_icm20948_regmap_ranges,
+	.num_ranges = ARRAY_SIZE(inv_icm20948_regmap_ranges),
+	.volatile_table = &inv_icm20948_regmap_volatile_accesses,
+	.rd_noinc_table = &inv_icm20948_regmap_rd_noinc_table,
+	.cache_type = REGCACHE_MAPLE,
+};
+EXPORT_SYMBOL_NS_GPL(inv_icm20948_regmap_config_spi, "IIO_ICM20948");
+
 static int inv_icm20948_setup(struct inv_icm20948_state *state)
 {
 	scoped_guard(mutex, &state->lock) {
