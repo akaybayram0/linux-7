@@ -144,6 +144,7 @@ int inv_icm20948_core_probe(struct regmap *regmap)
 
 	return inv_icm20948_setup(state);
 }
+EXPORT_SYMBOL_GPL(inv_icm20948_core_probe);
 
 MODULE_AUTHOR("Bharadwaj Raju <bharadwaj.raju777@gmail.com>");
 MODULE_DESCRIPTION("InvenSense ICM-20948 device driver");
