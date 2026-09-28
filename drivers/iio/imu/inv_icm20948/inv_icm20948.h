@@ -38,6 +38,13 @@
  #define INV_ICM20948_REG_GYRO_DATA_Y 0x0035
  #define INV_ICM20948_REG_GYRO_DATA_Z 0x0037
 
+#define INV_ICM20948_REG_ACCEL_DATA_X 0x002D
+#define INV_ICM20948_REG_ACCEL_DATA_Y 0x002F
+#define INV_ICM20948_REG_ACCEL_DATA_Z 0x0031
+
+#define INV_ICM20948_REG_ACCEL_CONFIG 0x2014
+#define INV_ICM20948_ACCEL_CONFIG_FULLSCALE GENMASK(2, 1)
+
  #define INV_ICM20948_REG_GYRO_CONFIG_1 0x2001
  #define INV_ICM20948_GYRO_CONFIG_ENABLE_DLPF BIT(0)
  #define INV_ICM20948_GYRO_CONFIG_FULLSCALE GENMASK(2, 1)
@@ -59,6 +66,13 @@ enum inv_icm20948_gyro_fs {
 	INV_ICM20948_GYRO_FS_2000 = 3,
 };
 
+enum inv_icm20948_accel_fs {
+	INV_ICM20948_ACCEL_FS_2G = 0,
+	INV_ICM20948_ACCEL_FS_4G = 1,
+	INV_ICM20948_ACCEL_FS_8G = 2,
+	INV_ICM20948_ACCEL_FS_16G = 3,
+};
+
 enum inv_icm20948_gyro_avg {
 	INV_ICM20948_GYRO_AVG_1X = 0,
 	INV_ICM20948_GYRO_AVG_2X = 1,
@@ -74,12 +88,18 @@ struct inv_icm20948_gyro_config {
 	int fsr;
 };
 
+struct inv_icm20948_accel_config {
+	int fsr;
+};
+
 struct inv_icm20948_state {
 	struct device *dev;
 	struct regmap *regmap;
 	struct iio_dev *temp_dev;
 	struct iio_dev *gyro_dev;
+	struct iio_dev *accel_dev;
 	struct inv_icm20948_gyro_config *gyro_conf;
+	struct inv_icm20948_accel_config *accel_conf;
 	struct mutex lock;
 };
 
@@ -87,6 +107,8 @@ extern int inv_icm20948_core_probe(struct regmap *regmap);
 
 struct iio_dev *inv_icm20948_temp_init(struct inv_icm20948_state *state);
 struct iio_dev *inv_icm20948_gyro_init(struct inv_icm20948_state *state);
+struct iio_dev *inv_icm20948_accel_init(
+	struct inv_icm20948_state *state);
 
 int inv_icm20948_pm_setup(struct inv_icm20948_state *state);
 

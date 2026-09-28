@@ -123,6 +123,10 @@ static int inv_icm20948_setup(struct inv_icm20948_state *state)
 	if (IS_ERR(state->gyro_dev))
 		return PTR_ERR(state->gyro_dev);
 
+	state->accel_dev = inv_icm20948_accel_init(state);
+	if (IS_ERR(state->accel_dev))
+		return PTR_ERR(state->accel_dev);
+
 	return inv_icm20948_pm_setup(state);
 }
 

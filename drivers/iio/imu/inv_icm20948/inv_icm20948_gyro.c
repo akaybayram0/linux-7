@@ -21,8 +21,8 @@ static const int inv_icm20948_gyro_scale[] = {
 	[2 * INV_ICM20948_GYRO_FS_1000] = 0,
 	[2 * INV_ICM20948_GYRO_FS_1000 + 1] = 532632,
 	/* 2000 dps == 0.001065264 rad/s per LSB */
-	[2 * INV_ICM20948_GYRO_FS_1000] = 0,
-	[2 * INV_ICM20948_GYRO_FS_1000 + 1] = 1065264,
+	[2 * INV_ICM20948_GYRO_FS_2000] = 0,
+	[2 * INV_ICM20948_GYRO_FS_2000 + 1] = 1065264,
 };
 
 /* Calibration bias, IIO range format int + nano */
@@ -46,10 +46,6 @@ static const int inv_icm20948_gyro_calibbias_range[] = {
 		.info_mask_shared_by_type_available =		\
 		  BIT(IIO_CHAN_INFO_SCALE) |		\
 		  BIT(IIO_CHAN_INFO_CALIBBIAS),		\
-		.info_mask_shared_by_all =		\
-		  BIT(IIO_CHAN_INFO_SAMP_FREQ),		\
-		.info_mask_shared_by_all_available =		\
-		  BIT(IIO_CHAN_INFO_SAMP_FREQ),		\
 		.scan_index = INV_ICM20948_GYRO_SCAN_##_dir,		\
 		.scan_type = {		\
 			.sign = 's',		\
