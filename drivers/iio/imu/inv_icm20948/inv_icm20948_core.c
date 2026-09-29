@@ -115,6 +115,12 @@ static int inv_icm20948_setup(struct inv_icm20948_state *state)
 		msleep(INV_ICM20948_SLEEP_WAKEUP_MS);
 	}
 
+	int ret;
+
+	ret = inv_icm20948_pm_setup(state);
+	if (ret)
+		return ret;
+
 	state->temp_dev = inv_icm20948_temp_init(state);
 	if (IS_ERR(state->temp_dev))
 		return PTR_ERR(state->temp_dev);
@@ -127,7 +133,7 @@ static int inv_icm20948_setup(struct inv_icm20948_state *state)
 	if (IS_ERR(state->accel_dev))
 		return PTR_ERR(state->accel_dev);
 
-	return inv_icm20948_pm_setup(state);
+	return 0;
 }
 
 int inv_icm20948_core_probe(struct regmap *regmap)
