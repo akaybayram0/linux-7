@@ -807,6 +807,10 @@
 		compatible = "invensense,icm20948";
 		reg = <3>;
 		spi-max-frequency = <7000000>;
+
+		mount-matrix = "1",  "0" , "0" ,
+			       "0", "-1" , "0" ,
+			       "0",  "0" ,"-1";
 	};
 };
 
