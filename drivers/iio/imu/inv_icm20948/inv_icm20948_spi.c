@@ -16,14 +16,13 @@
 static int inv_icm20948_probe(struct spi_device *spi)
 {
 	struct regmap *regmap;
+	int ret;
 
-	/*
-	 * Per the datasheet, the ICM-20948 SPI interface only supports
-	 * mode 3 (CPOL=1, CPHA=1). Force it here rather than relying on
-	 * every board's devicetree/ACPI description to get it right.
-	 */
 	spi->mode |= SPI_MODE_3;
 	spi->bits_per_word = 8;
+	ret = spi_setup(spi);
+	if (ret)
+		return ret;
 
 	regmap = devm_regmap_init_spi(spi, &inv_icm20948_regmap_config_spi);
 	if (IS_ERR(regmap))

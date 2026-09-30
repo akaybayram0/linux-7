@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 /*
- * Copyright (C) 2025 Bharadwaj Raju <bharadwaj.raju777@gmail.com>
  */
 
+#include <linux/bitfield.h>
 #include <linux/bits.h>
+#include <linux/cleanup.h>
+#include <linux/mutex.h>
+#include <linux/pm_runtime.h>
+#include <linux/regmap.h>
 
 #include <linux/iio/iio.h>
 
 #include "inv_icm20948.h"
 
 /*
- * IIO acceleration scale is m/s^2 per LSB.
+ * IIO acceleration scale is m/s^2 per LSB, expressed as
+ * IIO_VAL_INT_PLUS_NANO (val = 0, val2 = nano m/s^2 per LSB).
+ * e.g. +/-2g: 9.80665 / 16384 = 0.000598550 m/s^2 per LSB.
  *
  * ICM-20948 accelerometer sensitivity:
  *   +/-2g  = 16384 LSB/g
@@ -49,6 +55,7 @@ static const int inv_icm20948_accel_scale[] = {
 			BIT(IIO_CHAN_INFO_SCALE), \
 		.info_mask_shared_by_type_available = \
 			BIT(IIO_CHAN_INFO_SCALE), \
+		.ext_info = inv_icm20948_ext_info, \
 		.scan_index = INV_ICM20948_ACCEL_SCAN_##_dir, \
 		.scan_type = { \
 			.sign = 's', \
@@ -84,7 +91,8 @@ static int inv_icm20948_accel_apply_config(
 	ret = regmap_write_bits(state->regmap,
 				INV_ICM20948_REG_ACCEL_CONFIG,
 				INV_ICM20948_ACCEL_CONFIG_FULLSCALE,
-				state->accel_conf->fsr << 1);
+				FIELD_PREP(INV_ICM20948_ACCEL_CONFIG_FULLSCALE,
+					   state->accel_conf->fsr));
 
 	pm_runtime_put_autosuspend(state->dev);
 
@@ -160,7 +168,7 @@ static int inv_icm20948_accel_read_raw(
 		*val2 = inv_icm20948_accel_scale[
 			2 * state->accel_conf->fsr + 1];
 
-		return IIO_VAL_INT_PLUS_MICRO;
+		return IIO_VAL_INT_PLUS_NANO;
 
 	default:
 		return -EINVAL;
@@ -171,7 +179,7 @@ static int inv_icm20948_accel_write_scale(
 	struct inv_icm20948_state *state,
 	int val, int val2)
 {
-	int idx;
+	int idx, old_fsr, ret;
 
 	if (val != 0)
 		return -EINVAL;
@@ -186,9 +194,26 @@ static int inv_icm20948_accel_write_scale(
 	if (idx >= ARRAY_SIZE(inv_icm20948_accel_scale))
 		return -EINVAL;
 
+	old_fsr = state->accel_conf->fsr;
 	state->accel_conf->fsr = idx / 2;
 
-	return inv_icm20948_accel_apply_config(state);
+	ret = inv_icm20948_accel_apply_config(state);
+	if (ret)
+		state->accel_conf->fsr = old_fsr;
+
+	return ret;
+}
+
+static int inv_icm20948_accel_write_raw_get_fmt(
+	struct iio_dev *accel_dev,
+	const struct iio_chan_spec *chan, long mask)
+{
+	switch (mask) {
+	case IIO_CHAN_INFO_SCALE:
+		return IIO_VAL_INT_PLUS_NANO;
+	default:
+		return -EINVAL;
+	}
 }
 
 static int inv_icm20948_accel_write_raw(
@@ -233,7 +258,7 @@ static int inv_icm20948_accel_read_avail(
 		return -EINVAL;
 
 	*vals = inv_icm20948_accel_scale;
-	*type = IIO_VAL_INT_PLUS_MICRO;
+	*type = IIO_VAL_INT_PLUS_NANO;
 	*length = ARRAY_SIZE(inv_icm20948_accel_scale);
 
 	return IIO_AVAIL_LIST;
@@ -242,6 +267,7 @@ static int inv_icm20948_accel_read_avail(
 static const struct iio_info inv_icm20948_accel_info = {
 	.read_raw = inv_icm20948_accel_read_raw,
 	.write_raw = inv_icm20948_accel_write_raw,
+	.write_raw_get_fmt = inv_icm20948_accel_write_raw_get_fmt,
 	.read_avail = inv_icm20948_accel_read_avail,
 };
 

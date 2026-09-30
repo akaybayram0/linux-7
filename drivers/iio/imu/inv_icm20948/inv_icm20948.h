@@ -42,6 +42,32 @@
 #define INV_ICM20948_REG_ACCEL_DATA_Y 0x002F
 #define INV_ICM20948_REG_ACCEL_DATA_Z 0x0031
 
+/* bank 0: user control, I2C master status, external slave data */
+#define INV_ICM20948_REG_USER_CTRL 0x0003
+#define INV_ICM20948_USER_CTRL_I2C_MST_EN BIT(5)
+#define INV_ICM20948_USER_CTRL_I2C_IF_DIS BIT(4)
+
+#define INV_ICM20948_REG_I2C_MST_STATUS 0x0017
+#define INV_ICM20948_I2C_MST_STATUS_SLV4_NACK BIT(4)
+#define INV_ICM20948_I2C_MST_STATUS_SLV4_DONE BIT(6)
+
+#define INV_ICM20948_REG_EXT_SLV_SENS_DATA_00 0x003B
+
+/* bank 3: internal I2C master */
+#define INV_ICM20948_REG_I2C_MST_ODR_CONFIG 0x3000
+#define INV_ICM20948_REG_I2C_MST_CTRL 0x3001
+#define INV_ICM20948_REG_I2C_SLV0_ADDR 0x3003
+#define INV_ICM20948_REG_I2C_SLV0_REG 0x3004
+#define INV_ICM20948_REG_I2C_SLV0_CTRL 0x3005
+#define INV_ICM20948_REG_I2C_SLV4_ADDR 0x3013
+#define INV_ICM20948_REG_I2C_SLV4_REG 0x3014
+#define INV_ICM20948_REG_I2C_SLV4_CTRL 0x3015
+#define INV_ICM20948_REG_I2C_SLV4_DO 0x3016
+#define INV_ICM20948_REG_I2C_SLV4_DI 0x3017
+
+#define INV_ICM20948_I2C_SLV_RNW BIT(7)
+#define INV_ICM20948_I2C_SLV_EN BIT(7)
+
 #define INV_ICM20948_REG_ACCEL_CONFIG 0x2014
 #define INV_ICM20948_ACCEL_CONFIG_FULLSCALE GENMASK(2, 1)
 
@@ -98,16 +124,24 @@ struct inv_icm20948_state {
 	struct iio_dev *temp_dev;
 	struct iio_dev *gyro_dev;
 	struct iio_dev *accel_dev;
+	struct iio_dev *magn_dev;
 	struct inv_icm20948_gyro_config *gyro_conf;
 	struct inv_icm20948_accel_config *accel_conf;
 	struct mutex lock;
+	struct iio_mount_matrix orientation;
 };
+
+/* Shared by all channels: exposes "mount_matrix" in sysfs. */
+extern const struct iio_chan_spec_ext_info inv_icm20948_ext_info[];
 
 extern int inv_icm20948_core_probe(struct regmap *regmap);
 
 struct iio_dev *inv_icm20948_temp_init(struct inv_icm20948_state *state);
 struct iio_dev *inv_icm20948_gyro_init(struct inv_icm20948_state *state);
 struct iio_dev *inv_icm20948_accel_init(
+	struct inv_icm20948_state *state);
+
+struct iio_dev *inv_icm20948_magn_init(
 	struct inv_icm20948_state *state);
 
 int inv_icm20948_pm_setup(struct inv_icm20948_state *state);

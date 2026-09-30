@@ -7,19 +7,20 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
 title: InvenSense ICM-20948 Inertial Measurement Unit
 
 maintainers:
-  - Toxpox <toxpox@outlook.com>
+  - Your Name <you@example.com>
 
 description: |
-  9-axis MotionTracking device that combines a 3-axis gyroscope, a 3-axis
-  accelerometer and a 3-axis compass (AK09916), together with an on-board
-  Digital Motion Processor.
+  9-axis motion-tracking device that combines a 3-axis gyroscope, 3-axis
+  accelerometer and a 3-axis magnetometer (AK09916, reached through the
+  chip's internal I2C master, so it works over both I2C and SPI).
 
-  The device supports both I2C and SPI host interfaces. Unlike the MPU-6050
-  family, the register map is banked and the on-chip magnetometer is reached
-  through the I2C master interface of the device, so it is described by its
-  own binding.
+  Over SPI the driver uses mode 3 (CPOL=1, CPHA=1), so SPI nodes should set
+  both spi-cpol and spi-cpha.
 
-  https://invensense.tdk.com/wp-content/uploads/2016/06/DS-000189-ICM-20948-v1.3.pdf
+  https://invensense.tdk.com/wp-content/uploads/2024/03/DS-000189-ICM-20948-v1.6.pdf
+
+allOf:
+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
 
 properties:
   compatible:
@@ -30,33 +31,30 @@ properties:
 
   interrupts:
     maxItems: 1
+    description: Data-ready / FIFO interrupt line (INT1 pin).
 
-  drive-open-drain:
-    type: boolean
+  vdd-supply: true
 
-  vdd-supply:
-    description: Regulator that provides power to the sensor
+  vddio-supply: true
 
-  vddio-supply:
-    description: Regulator that provides power to the bus
+  spi-max-frequency:
+    maximum: 7000000
 
-  mount-matrix: true
-
-  spi-cpha: true
-  spi-cpol: true
+  mount-matrix:
+    description:
+      Orientation of the chip relative to the board, as a 3x3 matrix. The
+      driver exposes it as in_*_mount_matrix; it does not rotate the data.
 
 required:
   - compatible
   - reg
-
-allOf:
-  - $ref: /schemas/spi/spi-peripheral-props.yaml#
 
 unevaluatedProperties: false
 
 examples:
   - |
     #include <dt-bindings/interrupt-controller/irq.h>
+
     i2c {
         #address-cells = <1>;
         #size-cells = <0>;
@@ -68,6 +66,9 @@ examples:
             interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
             vdd-supply = <&vdd>;
             vddio-supply = <&vddio>;
+            mount-matrix = "1", "0", "0",
+                           "0", "1", "0",
+                           "0", "0", "1";
         };
     };
   - |
@@ -81,5 +82,10 @@ examples:
             spi-max-frequency = <7000000>;
             spi-cpha;
             spi-cpol;
+            vdd-supply = <&vdd>;
+            vddio-supply = <&vddio>;
+            mount-matrix = "1", "0", "0",
+                           "0", "1", "0",
+                           "0", "0", "1";
         };
     };

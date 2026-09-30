@@ -3,7 +3,13 @@
  * Copyright (C) 2025 Bharadwaj Raju <bharadwaj.raju777@gmail.com>
  */
 
+#include <linux/bitfield.h>
 #include <linux/bits.h>
+#include <linux/cleanup.h>
+#include <linux/math64.h>
+#include <linux/mutex.h>
+#include <linux/pm_runtime.h>
+#include <linux/regmap.h>
 
 #include <linux/iio/iio.h>
 
@@ -46,10 +52,12 @@ static const int inv_icm20948_gyro_calibbias_range[] = {
 		.info_mask_shared_by_type_available =		\
 		  BIT(IIO_CHAN_INFO_SCALE) |		\
 		  BIT(IIO_CHAN_INFO_CALIBBIAS),		\
+		.ext_info = inv_icm20948_ext_info,		\
 		.scan_index = INV_ICM20948_GYRO_SCAN_##_dir,		\
 		.scan_type = {		\
 			.sign = 's',		\
 			.realbits = 16,		\
+			.storagebits = 16,		\
 			.endianness = IIO_BE,		\
 		},		\
 	}
@@ -68,12 +76,17 @@ static const struct iio_chan_spec inv_icm20948_gyro_channels[] = {
 
 static int inv_icm20948_gyro_apply_config(struct inv_icm20948_state *state)
 {
-	guard(mutex)(&state->lock);
-	pm_runtime_get_sync(state->dev);
+	int ret = pm_runtime_resume_and_get(state->dev);
 
-	int ret = regmap_write_bits(state->regmap, INV_ICM20948_REG_GYRO_CONFIG_1,
-				 INV_ICM20948_GYRO_CONFIG_FULLSCALE,
-				 state->gyro_conf->fsr << 1);
+	if (ret < 0)
+		return ret;
+
+	guard(mutex)(&state->lock);
+
+	ret = regmap_write_bits(state->regmap, INV_ICM20948_REG_GYRO_CONFIG_1,
+				INV_ICM20948_GYRO_CONFIG_FULLSCALE,
+				FIELD_PREP(INV_ICM20948_GYRO_CONFIG_FULLSCALE,
+					   state->gyro_conf->fsr));
 
 	pm_runtime_put_autosuspend(state->dev);
 	return ret;
@@ -99,17 +112,16 @@ static int inv_icm20948_gyro_read_sensor(struct inv_icm20948_state *state,
 		return -EINVAL;
 	}
 
-	pm_runtime_get_sync(state->dev);
-
 	__be16 raw;
-	int ret = regmap_bulk_read(state->regmap, reg, &raw, sizeof(raw));
+	int ret = pm_runtime_resume_and_get(state->dev);
 
-	if (ret)
-		goto out;
+	if (ret < 0)
+		return ret;
 
-	*val = (s16)be16_to_cpu(raw);
+	ret = regmap_bulk_read(state->regmap, reg, &raw, sizeof(raw));
+	if (!ret)
+		*val = (s16)be16_to_cpu(raw);
 
-out:
 	pm_runtime_put_autosuspend(state->dev);
 	return ret;
 }
@@ -136,14 +148,19 @@ static int inv_icm20948_gyro_read_calibbias(struct inv_icm20948_state *state,
 
 	__be16 offset_raw;
 
-	pm_runtime_get_sync(state->dev);
-	int ret = regmap_bulk_read(state->regmap, reg, &offset_raw,
-				   sizeof(offset_raw));
+	int ret = pm_runtime_resume_and_get(state->dev);
+
+	if (ret < 0)
+		return ret;
+
+	ret = regmap_bulk_read(state->regmap, reg, &offset_raw,
+			       sizeof(offset_raw));
 	pm_runtime_put_autosuspend(state->dev);
 
 	if (ret)
 		return ret;
-	int offset = be16_to_cpu(offset_raw);
+	/* the offset register is signed: sign-extend, don't zero-extend */
+	s16 offset = (s16)be16_to_cpu(offset_raw);
 
 	/* step size = 0.0305 dps/LSB => +/- 999.24 dps over 16-bit range */
 	/* offset * 0.0305 * Pi * 10**9 (for nano) / 180 */
@@ -157,9 +174,11 @@ static int inv_icm20948_gyro_read_calibbias(struct inv_icm20948_state *state,
 		val64 -= 180 / 2;
 
 	s64 bias = div_s64(val64, 180);
+	s32 rem;
 
-	*val = bias / 1000000000L;
-	*val2 = bias % 1000000000L;
+	/* plain 64-bit '/' and '%' do not link on 32-bit kernels */
+	*val = div_s64_rem(bias, 1000000000, &rem);
+	*val2 = rem;
 
 	return IIO_VAL_INT_PLUS_NANO;
 }
@@ -213,8 +232,15 @@ static int inv_icm20948_gyro_write_scale(struct inv_icm20948_state *state,
 	if (idx >= ARRAY_SIZE(inv_icm20948_gyro_scale))
 		return -EINVAL;
 
+	int old_fsr = state->gyro_conf->fsr;
+	int ret;
+
 	state->gyro_conf->fsr = idx / 2;
-	return inv_icm20948_gyro_apply_config(state);
+	ret = inv_icm20948_gyro_apply_config(state);
+	if (ret)
+		state->gyro_conf->fsr = old_fsr;
+
+	return ret;
 }
 
 static int inv_icm20948_write_calibbias(struct inv_icm20948_state *state,
@@ -237,22 +263,34 @@ static int inv_icm20948_write_calibbias(struct inv_icm20948_state *state,
 		return -EINVAL;
 	}
 
-	s64 bias = (s64)val * 100000000L + val2;
+	/*
+	 * nano rad/s. For negative values with a non-zero integer part the
+	 * fraction must be subtracted, whichever sign val2 arrives with.
+	 */
+	s64 bias = (s64)val * 1000000000L;
+
+	bias += (val < 0) ? -(s64)abs(val2) : val2;
+
+	/* LSB = bias * 180 / 95818576, rounded to nearest (half away from 0) */
 	s64 val64 = bias * 180;
 
 	if (val64 >= 0)
-		val64 -= 180 / 2;
+		val64 += 95818576L / 2;
 	else
-		val64 += 180 / 2;
+		val64 -= 95818576L / 2;
 
 	s64 offset64 = div_s64(val64, 95818576L);
 	s16 offset = clamp(offset64, (s64)S16_MIN, (s64)S16_MAX);
 	__be16 offset_write = cpu_to_be16(offset);
 
-	pm_runtime_get_sync(state->dev);
+	int ret = pm_runtime_resume_and_get(state->dev);
+
+	if (ret < 0)
+		return ret;
+
 	mutex_lock(&state->lock);
-	int ret = regmap_bulk_write(state->regmap, reg, &offset_write,
-				 sizeof(offset_write));
+	ret = regmap_bulk_write(state->regmap, reg, &offset_write,
+				sizeof(offset_write));
 	mutex_unlock(&state->lock);
 	pm_runtime_put_autosuspend(state->dev);
 	return ret;
@@ -287,6 +325,19 @@ static int inv_icm20948_gyro_write_raw(struct iio_dev *gyro_dev,
 	}
 }
 
+static int inv_icm20948_gyro_write_raw_get_fmt(struct iio_dev *gyro_dev,
+					       struct iio_chan_spec const *chan,
+					       long mask)
+{
+	switch (mask) {
+	case IIO_CHAN_INFO_SCALE:
+	case IIO_CHAN_INFO_CALIBBIAS:
+		return IIO_VAL_INT_PLUS_NANO;
+	default:
+		return -EINVAL;
+	}
+}
+
 static int inv_icm20948_gyro_read_avail(struct iio_dev *gyro_dev,
 					struct iio_chan_spec const *chan,
 					const int **vals, int *type,
@@ -314,6 +365,7 @@ static int inv_icm20948_gyro_read_avail(struct iio_dev *gyro_dev,
 static const struct iio_info inv_icm20948_gyro_info = {
 	.read_raw = inv_icm20948_gyro_read_raw,
 	.write_raw = inv_icm20948_gyro_write_raw,
+	.write_raw_get_fmt = inv_icm20948_gyro_write_raw_get_fmt,
 	.read_avail = inv_icm20948_gyro_read_avail,
 };
 
@@ -332,10 +384,7 @@ struct iio_dev *inv_icm20948_gyro_init(struct inv_icm20948_state *state)
 	gyro_dev->channels = inv_icm20948_gyro_channels;
 	gyro_dev->num_channels = ARRAY_SIZE(inv_icm20948_gyro_channels);
 
-	int ret = devm_iio_device_register(state->dev, gyro_dev);
-
-	if (ret)
-		return ERR_PTR(ret);
+	int ret;
 
 	state->gyro_conf =
 		devm_kzalloc(state->dev, sizeof(*state->gyro_conf), GFP_KERNEL);
@@ -344,6 +393,10 @@ struct iio_dev *inv_icm20948_gyro_init(struct inv_icm20948_state *state)
 
 	state->gyro_conf->fsr = INV_ICM20948_GYRO_FS_250;
 	ret = inv_icm20948_gyro_apply_config(state);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = devm_iio_device_register(state->dev, gyro_dev);
 	if (ret)
 		return ERR_PTR(ret);
 

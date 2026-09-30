@@ -3,6 +3,8 @@
  * Copyright (C) 2025 Bharadwaj Raju <bharadwaj.raju777@gmail.com>
  */
 
+ #include <linux/spi/spi.h>
+
  #include "inv_icm20948.h"
 
 static const struct regmap_range_cfg inv_icm20948_regmap_ranges[] = {
@@ -12,6 +14,7 @@ static const struct regmap_range_cfg inv_icm20948_regmap_ranges[] = {
 		.range_max = 0x3FFF,
 		.selector_reg = INV_ICM20948_REG_BANK_SEL,
 		.selector_mask = INV_ICM20948_BANK_SEL_MASK,
+		.selector_shift = 4,
 		.window_start = 0,
 		.window_len = 0x1000,
 	},
@@ -33,7 +36,8 @@ static const struct regmap_range inv_icm20948_regmap_volatile_yes_ranges[] = {
 	/* GYRO_CONFIG_1 */
 	regmap_reg_range(0x2001, 0x2001),
 	/* I2C SLV4 data in */
-	regmap_reg_range(0x307F, 0x307F),
+	regmap_reg_range(INV_ICM20948_REG_I2C_SLV4_DI,
+			 INV_ICM20948_REG_I2C_SLV4_DI),
 };
 
 static const struct regmap_access_table inv_icm20948_regmap_volatile_accesses = {
@@ -86,6 +90,20 @@ const struct regmap_config inv_icm20948_regmap_config_spi = {
 };
 EXPORT_SYMBOL_NS_GPL(inv_icm20948_regmap_config_spi, "IIO_ICM20948");
 
+static const struct iio_mount_matrix *
+inv_icm20948_get_mount_matrix(const struct iio_dev *indio_dev,
+			      const struct iio_chan_spec *chan)
+{
+	struct inv_icm20948_state *state = iio_device_get_drvdata(indio_dev);
+
+	return &state->orientation;
+}
+
+const struct iio_chan_spec_ext_info inv_icm20948_ext_info[] = {
+	IIO_MOUNT_MATRIX(IIO_SHARED_BY_TYPE, inv_icm20948_get_mount_matrix),
+	{ }
+};
+
 static int inv_icm20948_setup(struct inv_icm20948_state *state)
 {
 	scoped_guard(mutex, &state->lock) {
@@ -106,6 +124,15 @@ static int inv_icm20948_setup(struct inv_icm20948_state *state)
 		if (ret)
 			return ret;
 		msleep(INV_ICM20948_SLEEP_WAKEUP_MS);
+
+		/* The reset clears USER_CTRL, so this has to come after it. */
+		if (IS_ENABLED(CONFIG_SPI) && state->dev->bus == &spi_bus_type) {
+			ret = regmap_set_bits(state->regmap,
+					      INV_ICM20948_REG_USER_CTRL,
+					      INV_ICM20948_USER_CTRL_I2C_IF_DIS);
+			if (ret)
+				return ret;
+		}
 
 		ret = regmap_write_bits(state->regmap, INV_ICM20948_REG_PWR_MGMT_1,
 					INV_ICM20948_PWR_MGMT_1_SLEEP, 0);
@@ -133,6 +160,14 @@ static int inv_icm20948_setup(struct inv_icm20948_state *state)
 	if (IS_ERR(state->accel_dev))
 		return PTR_ERR(state->accel_dev);
 
+	state->magn_dev = inv_icm20948_magn_init(state);
+	if (IS_ERR(state->magn_dev)) {
+		dev_warn(state->dev,
+			 "magnetometer init failed (%pe), continuing without it\n",
+			 state->magn_dev);
+		state->magn_dev = NULL;
+	}
+
 	return 0;
 }
 
@@ -141,6 +176,7 @@ int inv_icm20948_core_probe(struct regmap *regmap)
 	struct device *dev = regmap_get_device(regmap);
 
 	struct inv_icm20948_state *state;
+	int ret;
 
 	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
 	if (!state)
@@ -151,6 +187,11 @@ int inv_icm20948_core_probe(struct regmap *regmap)
 	state->dev = dev;
 
 	mutex_init(&state->lock);
+
+	/* Falls back to the identity matrix if "mount-matrix" is absent. */
+	ret = iio_read_mount_matrix(dev, &state->orientation);
+	if (ret)
+		return ret;
 
 	return inv_icm20948_setup(state);
 }

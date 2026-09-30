@@ -4,6 +4,10 @@
  */
 
 #include <linux/bits.h>
+#include <linux/cleanup.h>
+#include <linux/mutex.h>
+#include <linux/pm_runtime.h>
+#include <linux/regmap.h>
 
 #include <linux/iio/iio.h>
 
@@ -19,29 +23,31 @@ static const struct iio_chan_spec
 				   .scan_type = {
 					   .sign = 's',
 					   .realbits = 16,
+					   .storagebits = 16,
 				   } };
 
 static int inv_icm20948_temp_read_sensor(struct inv_icm20948_state *state,
 					 s16 *temp)
 {
+	__be16 raw;
 	int ret;
 
-	pm_runtime_get_sync(state->dev);
-	mutex_lock(&state->lock);
+	ret = pm_runtime_resume_and_get(state->dev);
+	if (ret < 0)
+		return ret;
 
-	__be16 raw;
-	ret = regmap_bulk_read(state->regmap, INV_ICM20948_REG_TEMP_DATA,
-				   &raw, sizeof(raw));
-	if (ret)
-		goto out;
+	scoped_guard(mutex, &state->lock)
+		ret = regmap_bulk_read(state->regmap, INV_ICM20948_REG_TEMP_DATA,
+				       &raw, sizeof(raw));
 
-	*temp = __be16_to_cpu(raw);
-	ret = 0;
-
-out:
-	mutex_unlock(&state->lock);
 	pm_runtime_put_autosuspend(state->dev);
-	return ret;
+
+	if (ret)
+		return ret;
+
+	*temp = (s16)be16_to_cpu(raw);
+
+	return 0;
 }
 
 static int inv_icm20948_temp_read_raw(struct iio_dev *temp_dev,
@@ -51,17 +57,23 @@ static int inv_icm20948_temp_read_raw(struct iio_dev *temp_dev,
 	struct inv_icm20948_state *state = iio_device_get_drvdata(temp_dev);
 
 	switch (mask) {
-	case IIO_CHAN_INFO_RAW:
+	case IIO_CHAN_INFO_RAW: {
+		s16 temp;
+		int ret;
+
 		if (!iio_device_claim_direct(temp_dev))
 			return -EBUSY;
-		s16 temp;
-		int ret = inv_icm20948_temp_read_sensor(state, &temp);
 
+		ret = inv_icm20948_temp_read_sensor(state, &temp);
+
+		/* release on every path, including errors */
+		iio_device_release_direct(temp_dev);
 		if (ret)
 			return ret;
-		iio_device_release_direct(temp_dev);
+
 		*val = temp;
 		return IIO_VAL_INT;
+	}
 	/*
 	 * Sensitivity = 333.87
 	 * RoomTempOff = 21
